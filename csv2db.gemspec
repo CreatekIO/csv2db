@@ -39,7 +39,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'railties', '~> 4.2.10'
   spec.add_dependency 'sidekiq', '~> 5.0.5'
 
-  spec.add_development_dependency 'bundler', '~> 2.0'
+  spec.add_development_dependency 'bundler', '~> 1'
+  spec.add_development_dependency 'byebug'
+  spec.add_development_dependency 'mysql2', '~> 0.3.20'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
 end
