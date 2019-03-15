@@ -1,4 +1,4 @@
-require 'sidekiq/worker'
+require 'sidekiq'
 
 module Csv2db
   class ImportWorker

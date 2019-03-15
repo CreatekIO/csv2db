@@ -1,7 +1,11 @@
+require 'active_record'
+require 'dragonfly'
 require 'charlock_holmes/string'
 
 module Csv2db
   class Import < ActiveRecord::Base
+    extend Dragonfly::Model
+
     class ImportError < StandardError; end
 
     # This class is designed to be inherited from
