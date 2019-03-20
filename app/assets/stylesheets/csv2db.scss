@@ -1,0 +1,19 @@
+.csv2db-table {
+  .badge-upload-completed {
+    background-color: green;
+  }
+
+  .badge-upload-aborted, .badge-upload-failed {
+    background-color: indianred;
+  }
+}
+
+.csv2db-modal {
+  .log-error {
+    color: red;
+  }
+
+  .log-warn {
+    color: orange;
+  }
+}

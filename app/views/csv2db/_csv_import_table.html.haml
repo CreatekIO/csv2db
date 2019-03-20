@@ -1,0 +1,68 @@
+.file-upload-header
+  %h4 File Uploads
+  - if imports.any?(&:pending?)
+    .refresh-link= link_to 'Refresh pending uploads'
+
+%table.table.table-striped.csv2db-table
+  %tr
+    %th ID
+    %th Date
+    %th File
+    %th Status
+    %th
+    %th
+  - imports.each do |import|
+    %tr
+      %td= import.id
+      %td= import.created_at
+      %td= link_to import.file.name, import.file.url, target: '_blank'
+      %td
+        .badge{ class: "badge-upload-#{import.status}" }= import.status
+      %td
+        - unless import.pending?
+          - if import.summary.any?
+            = link_to '#import-summary', data: { toggle: 'modal', id: import.id } do
+              View summary
+          - else
+            No summary
+      %td
+        - unless import.pending?
+          = link_to '#import-log', data: { toggle: 'modal', id: import.id } do
+            View log
+
+#import-summary.modal.fade.csv2db-modal{role: "dialog", tabindex: "-1"}
+  .modal-dialog{:role => "document"}
+    .modal-content
+      .modal-header
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4.modal-title Summary
+      .modal-body
+        - imports.each do |import|
+          - if import.summary.any?
+            .import-summary{ id: "import_summary_#{import.id}" }
+              - import.summary_categories.each do |category|
+                %h5= category
+                %ul.list-group
+                  - import.summary_items_for_category(category).each do |summary_item|
+                    %li.list-group-item
+                      = summary_item[:name]
+                      %span.badge= summary_item[:value]
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
+
+#import-log.modal.fade.csv2db-modal{role: "dialog", tabindex: "-1"}
+  .modal-dialog.modal-lg{role: "document"}
+    .modal-content
+      .modal-header
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4.modal-title Log
+      .modal-body.model-scrollbar
+        - imports.each do |import|
+          - if import.log_messages.any?
+            .import-log{ :id => "import_log_#{import.id}" }
+              - import.log_messages.each do |msg|
+                %div{ 'class' => "log-#{msg[:level].to_s}" }= "#{msg[:level]} #{msg[:time]} #{msg[:message]}"
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
