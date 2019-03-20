@@ -1,33 +1,51 @@
 require 'active_record'
+require 'active_support/concern'
 require 'dragonfly'
 require 'charlock_holmes/string'
 
 module Csv2db
-  class Import < ActiveRecord::Base
-    extend Dragonfly::Model
+  module Import
+    extend ActiveSupport::Concern
 
     class ImportError < StandardError; end
-
-    # This class is designed to be inherited from
-    self.abstract_class = true
 
     RECENT_IMPORT_LIMIT = 5
     BYTE_ORDER_MARK = "\xEF\xBB\xBF".freeze
 
-    validates :file, presence: true
-    validate :required_params_are_present
-    validate :check_file_extension
+    module ClassMethods
+      def before_process(*args, &block)
+        set_callback :process, :before, *args, &block
+      end
 
-    dragonfly_accessor :file
+      def after_process(*args, &block)
+        set_callback :process, :after, *args, &block
+      end
 
-    after_initialize :set_default_values, :set_required_params
+      def around_process(*args, &block)
+        set_callback :process, :around, *args, &block
+      end
+    end
 
-    serialize :log_messages, Array
-    serialize :summary, Array
-    serialize :params, Hash
+    included do
+      extend Dragonfly::Model
 
-    scope :newest_first, -> { order(created_at: :desc) }
-    scope :most_recent, -> { newest_first.limit(RECENT_IMPORT_LIMIT) }
+      validates :file, presence: true
+      validate :required_params_are_present
+      validate :check_file_extension
+
+      dragonfly_accessor :file
+
+      after_initialize :set_default_values, :set_required_params
+
+      serialize :log_messages, Array
+      serialize :summary, Array
+      serialize :params, Hash
+
+      scope :newest_first, -> { order(created_at: :desc) }
+      scope :most_recent, -> { newest_first.limit(RECENT_IMPORT_LIMIT) }
+
+      define_callbacks :process
+    end
 
     module Status
       PENDING = 'pending'.freeze
@@ -36,49 +54,36 @@ module Csv2db
       FAILED = 'failed'.freeze
     end
 
-    define_callbacks :process
-
-    def self.before_process(*args, &block)
-      set_callback :process, :before, *args, &block
-    end
-
-    def self.after_process(*args, &block)
-      set_callback :process, :after, *args, &block
-    end
-
-    def self.around_process(*args, &block)
-      set_callback :process, :around, *args, &block
-    end
-
     def enqueue
-      save && ImportWorker.perform_async(id)
+      save && ImportWorker.perform_async(self.class.name, id)
     end
 
     def process
       run_callbacks :process do
-        if pending?
-          with_lock do
-            log("Starting to process Import:#{id}")
-
-            begin
-              check_headers
-              process_file
-              stop if errors?
-              log('Completed.')
-              self.status = Status::COMPLETED
-            rescue ImportError
-              log('Failed due to errors.', :error)
-              self.status = Status::FAILED
-              raise ActiveRecord::Rollback
-            rescue => e
-              log('Aborted due to exception.', :error)
-              log(e.message, :error)
-              self.status = Status::ABORTED
-              raise ActiveRecord::Rollback
-            end
-          end
-        else
+        unless pending?
           log("Skipping - file is not in pending state (#{status})", :warn)
+          return false
+        end
+
+        with_lock do
+          log("Starting to process Import:#{id}")
+
+          begin
+            check_headers
+            process_file
+            stop if errors?
+            log('Completed.')
+            self.status = Status::COMPLETED
+          rescue ImportError
+            log('Failed due to errors.', :error)
+            self.status = Status::FAILED
+            raise ActiveRecord::Rollback
+          rescue => e
+            log('Aborted due to exception.', :error)
+            log(e.message, :error)
+            self.status = Status::ABORTED
+            raise ActiveRecord::Rollback
+          end
         end
 
         save!

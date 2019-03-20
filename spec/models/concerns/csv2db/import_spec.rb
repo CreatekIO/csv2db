@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Csv2db::Import do
-  class TestModel < described_class
+  class TestModel < ActiveRecord::Base
+    include Csv2db::Import
     self.table_name = 'csv_imports'
   end
 
