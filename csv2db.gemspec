@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
 
   # Matches current dependencies in MyRewards
   spec.add_dependency 'activerecord', '~> 4.2.10'
+  spec.add_dependency 'activesupport', '~> 4.2.10'
   spec.add_dependency 'charlock_holmes', '~> 0.7.3'
   spec.add_dependency 'dragonfly', '~> 1.1.3'
   spec.add_dependency 'railties', '~> 4.2.10'
