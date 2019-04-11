@@ -3,7 +3,7 @@ require 'byebug'
 require 'mysql2'
 require 'rails'
 require 'csv2db'
-require_relative '../app/models/csv2db/import'
+require_relative '../app/models/concerns/csv2db/import'
 require_relative '../app/workers/csv2db/import_worker'
 
 ENV['RAILS_ENV'] ||= 'test'
