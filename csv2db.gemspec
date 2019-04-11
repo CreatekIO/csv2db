@@ -32,13 +32,12 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  # Matches current dependencies in MyRewards
-  spec.add_dependency 'activerecord', '~> 4.2.10'
-  spec.add_dependency 'activesupport', '~> 4.2.10'
+  spec.add_dependency 'activerecord', '~> 4'
+  spec.add_dependency 'activesupport', '~> 4'
   spec.add_dependency 'charlock_holmes', '~> 0.7.3'
-  spec.add_dependency 'dragonfly', '~> 1.1.3'
-  spec.add_dependency 'railties', '~> 4.2.10'
-  spec.add_dependency 'sidekiq', '~> 5.0.5'
+  spec.add_dependency 'dragonfly', '~> 1'
+  spec.add_dependency 'railties', '~> 4'
+  spec.add_dependency 'sidekiq', '>= 3'
 
   spec.add_development_dependency 'bundler', '~> 1'
   spec.add_development_dependency 'byebug'
