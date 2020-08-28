@@ -7,6 +7,7 @@ Gem::Specification.new do |spec|
   spec.version       = Csv2db::VERSION
   spec.authors       = ['Createk']
   spec.email         = ['dev@createk.io']
+  spec.licenses      = ['MIT']
 
   spec.summary       = 'Imports CSVs into ActiveRecord'
   spec.homepage      = 'https://github.com/CreatekIO/csv2db'
