@@ -1,7 +1,7 @@
 require 'bundler/setup'
 require 'byebug'
 require 'mysql2'
-require 'rails'
+require 'rails/all'
 require 'csv2db'
 require_relative '../app/models/concerns/csv2db/import'
 require_relative '../app/workers/csv2db/import_worker'
