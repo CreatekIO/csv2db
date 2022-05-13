@@ -2,7 +2,7 @@ class Csv2dbCreateCsvImports < ActiveRecord::Migration[4.2]
   def change
     reversible do |dir|
       dir.up do
-        if table_exists?('file_processors') || table_exists?('csv_imports')
+        if data_source_exists?('file_processors') || data_source_exists?('csv_imports')
           say 'Table already created, skipping migration'
           return
         end
