@@ -1,4 +1,4 @@
-class Csv2dbCreateCsvImports < ActiveRecord::Migration
+class Csv2dbCreateCsvImports < ActiveRecord::Migration[4.2]
   def change
     reversible do |dir|
       dir.up do
