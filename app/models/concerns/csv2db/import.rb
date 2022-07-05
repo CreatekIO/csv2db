@@ -69,6 +69,7 @@ module Csv2db
           log("Starting to process Import:#{id}")
 
           begin
+            check_file_contains_data
             check_headers
             process_file
             stop if errors?
@@ -128,6 +129,11 @@ module Csv2db
     end
 
     private
+
+    def check_file_contains_data
+      error(I18n.t('shared.file_processor.insufficient_rows')) unless csv.count > 0
+      stop if errors?
+    end
 
     def check_headers
       check_for_required_headers
