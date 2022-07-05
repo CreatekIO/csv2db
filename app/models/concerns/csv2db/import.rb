@@ -144,15 +144,13 @@ module Csv2db
     def check_for_allowed_headers
       headers = csv.headers - allowed_headers
       unless headers.empty?
-        error('The following headers were not recognised:'\
-              " #{headers.join(', ')}"
-             )
+        error(I18n.t('shared.file_processor.headers_not_recognised', headers: headers.join(', ')))
       end
     end
 
     def check_for_required_headers
       headers = required_headers - (required_headers & csv.headers)
-      error("The following headers are missing: #{headers.join(', ')}") unless headers.empty?
+      error(I18n.t('shared.file_processor.headers_missing', headers: headers.join(', '))) unless headers.empty?
     end
 
     def required_headers
