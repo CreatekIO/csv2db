@@ -62,6 +62,7 @@ RSpec.describe Csv2db::Import do
   describe '#process' do
     before do
       allow(subject.file).to receive(:ext).and_return('csv')
+      allow(subject).to receive(:check_file_contains_data)
       allow(subject).to receive(:check_headers)
     end
 
