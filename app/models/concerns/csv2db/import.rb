@@ -131,7 +131,7 @@ module Csv2db
     private
 
     def check_file_contains_data
-      error(I18n.t('shared.file_processor.insufficient_rows')) unless csv.count > 0
+      error(I18n.t('shared.file_processor.insufficient_rows')) unless file.data.present? && csv.count > 0
       stop if errors?
     end
 
