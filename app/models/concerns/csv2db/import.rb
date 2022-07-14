@@ -76,7 +76,7 @@ module Csv2db
             log('Completed.')
             self.status = Status::COMPLETED
           rescue ImportError
-            log('Failed due to errors.', :error)
+            log(I18n.t('shared.file_processor.failed_due_to_errors'), :error)
             self.status = Status::FAILED
             raise ActiveRecord::Rollback
           rescue => e
