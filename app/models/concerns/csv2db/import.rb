@@ -104,7 +104,7 @@ module Csv2db
     end
 
     def summary_item(name, value, category = '')
-      summary << { name: name, value: value, category: category }.with_indifferent_access
+      summary << { name: name, value: value, category: category }
     end
 
     def summary_categories
