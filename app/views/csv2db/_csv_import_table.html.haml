@@ -17,18 +17,23 @@
       %td= import.created_at
       %td= link_to import.file.name, import.file.url, target: '_blank'
       %td
-        .badge{ class: "badge-upload-#{import.status}" }= import.status
+        .badge{ class: "badge-upload-#{import.map_import_status}" }= import.map_import_status
       %td
-        - unless import.pending?
-          - if import.summary.any?
+      - unless import.pending?
+        - if import.summary.any?
+          %td
             = link_to '#import-summary', data: { toggle: 'modal', id: import.id } do
-              View summary
-          - else
+              = import.needs_user_input? && !import.pending_approval? ? 'Actions' : 'View summary'
+          %td
+        - else
+          %td
             No summary
-      %td
-        - unless import.pending?
+          %td
+      - unless import.pending?
+        %td
           = link_to '#import-log', data: { toggle: 'modal', id: import.id } do
             View log
+        %td
 
 #import-summary.modal.fade.csv2db-modal{role: "dialog", tabindex: "-1"}
   .modal-dialog{:role => "document"}
@@ -48,8 +53,13 @@
                     %li.list-group-item
                       = summary_item[:name]
                       %span.badge= summary_item[:value]
+              - unless import.status == 'pending_approval'
+                %div{ style: 'display: flex; justify-content: space-evenly;' }
+                  = link_to 'Confirm file', "/client_order_imports/#{import.id}", method: :patch, class: 'btn btn-success', id: import.id
+                  = link_to 'Cancel and remove', "/client_order_imports/#{import.id}", method: :delete, class: 'btn btn-danger', id: import.id
       .modal-footer
         %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
+
 
 #import-log.modal.fade.csv2db-modal{role: "dialog", tabindex: "-1"}
   .modal-dialog.modal-lg{role: "document"}

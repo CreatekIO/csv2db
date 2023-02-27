@@ -52,6 +52,7 @@ module Csv2db
       COMPLETED = 'completed'.freeze
       ABORTED = 'aborted'.freeze
       FAILED = 'failed'.freeze
+      PENDING_APPROVAL = 'pending_approval'.freeze
     end
 
     def enqueue
@@ -126,6 +127,20 @@ module Csv2db
       else
         super
       end
+    end
+
+    def map_import_status
+      return status unless needs_user_input?
+
+      return status == 'completed' ? 'pending' : status
+    end
+
+    def needs_user_input?
+      self.params[:needs_user_input]
+    end
+
+    def pending_approval?
+      status == Status::PENDING_APPROVAL
     end
 
     private
