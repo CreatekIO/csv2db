@@ -17,3 +17,14 @@
     color: orange;
   }
 }
+
+.confirm-text {
+  display: flex;
+  justify-content: center;
+}
+
+.submit-actions {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 25px;
+}

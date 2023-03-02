@@ -43,6 +43,8 @@ module Csv2db
 
       scope :newest_first, -> { order(created_at: :desc) }
       scope :most_recent, -> { newest_first.limit(RECENT_IMPORT_LIMIT) }
+      scope :last_30_days, -> { where(['created_at > ?', 30.days.ago]).newest_first }
+
 
       define_callbacks :process
     end

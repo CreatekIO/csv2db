@@ -11,6 +11,9 @@
     %th Status
     %th
     %th
+    %th
+    %th
+    %th
   - imports.each do |import|
     %tr
       %td= import.id
@@ -53,10 +56,12 @@
                     %li.list-group-item
                       = summary_item[:name]
                       %span.badge= summary_item[:value]
-              - unless import.status == 'pending_approval'
-                %div{ style: 'display: flex; justify-content: space-evenly;' }
-                  = link_to 'Confirm file', "/client_order_imports/#{import.id}", method: :patch, class: 'btn btn-success', id: import.id
-                  = link_to 'Cancel and remove', "/client_order_imports/#{import.id}", method: :delete, class: 'btn btn-danger', id: import.id
+              - unless import.status == 'pending_approval' && !import.needs_user_input?
+                %div{ class: 'confirm-text' }
+                  By confirming this file, our team will be notified and orders will be placed post approval
+                %div{ class: 'submit-actions' }
+                  = link_to 'Commit Orders', "#{request.env['HTTP_REFERER'].presence}/#{import.id}", method: :patch, class: 'btn btn-success', id: import.id
+                  = link_to 'Cancel and remove', "#{request.env['HTTP_REFERER'].presence}/#{import.id}", method: :delete, class: 'btn btn-danger', id: import.id
       .modal-footer
         %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
 
