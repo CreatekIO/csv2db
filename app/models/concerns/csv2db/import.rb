@@ -134,7 +134,7 @@ module Csv2db
     def map_import_status
       return status unless needs_user_input?
 
-      return status == 'completed' ? 'pending' : status
+      status == 'completed' ? 'pending' : status
     end
 
     def needs_user_input?
