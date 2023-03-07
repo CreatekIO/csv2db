@@ -43,6 +43,7 @@ module Csv2db
 
       scope :newest_first, -> { order(created_at: :desc) }
       scope :most_recent, -> { newest_first.limit(RECENT_IMPORT_LIMIT) }
+      scope :last_30_days, -> { where(['created_at > ?', 30.days.ago]).newest_first }
 
       define_callbacks :process
     end
@@ -52,6 +53,7 @@ module Csv2db
       COMPLETED = 'completed'.freeze
       ABORTED = 'aborted'.freeze
       FAILED = 'failed'.freeze
+      PENDING_APPROVAL = 'pending_approval'.freeze
     end
 
     def enqueue
@@ -129,6 +131,20 @@ module Csv2db
     end
 
     private
+
+    def map_import_status
+      return status unless needs_user_input?
+
+      status == 'completed' ? 'pending' : status
+    end
+
+    def needs_user_input?
+      self.params[:needs_user_input]
+    end
+
+    def pending_approval?
+      status == Status::PENDING_APPROVAL
+    end
 
     def check_file_contains_data
       error(I18n.t('shared.file_processor.insufficient_rows')) unless file.data.present? && csv.count > 0
