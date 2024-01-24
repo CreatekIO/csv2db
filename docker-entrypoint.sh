@@ -2,7 +2,7 @@
 set -eu
 
 echo "~~~ update RubyGems and Bundler"
-gem install bundler -v "~> 2"
+gem install bundler -v "~> 2.4.22"
 gem update --system >/dev/null
 
 echo "~~~ bundle install"
