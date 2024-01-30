@@ -40,10 +40,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'railties', '>= 4.2', '< 6'
   spec.add_dependency 'sidekiq', '>= 3'
 
-  spec.add_development_dependency 'bundler', '~> 1'
+  spec.add_development_dependency 'bundler', '>= 2.2.18', '< 3'
   spec.add_development_dependency 'byebug'
   spec.add_development_dependency 'mysql2', '~> 0.5.3'
-  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'rake', '~> 12.3.3'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4'
 end

@@ -9,7 +9,8 @@ steps:
             - BUILDKITE_JOB_ID
     timeout_in_minutes: 5
     commands:
-      - .buildkite/test.sh
+      - './docker-entrypoint.sh'
+      - '.buildkite/test.sh'
     env:
       BYEBUG: '0'
       DEBUGGER: '0'
