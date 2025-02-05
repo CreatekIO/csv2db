@@ -1,6 +1,7 @@
 require 'bundler/setup'
 require 'byebug'
 require 'mysql2'
+require 'logger'
 require 'rails/all'
 require 'csv2db'
 require_relative '../app/models/concerns/csv2db/import'
