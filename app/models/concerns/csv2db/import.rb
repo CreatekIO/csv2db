@@ -27,13 +27,9 @@ module Csv2db
     end
 
     included do
-      extend Dragonfly::Model
+      include Module.const_get("Csv2db::#{Csv2db.config.storage_adapter}Adapter")
 
-      validates :file, presence: true
       validate :required_params_are_present
-      validate :check_file_extension
-
-      dragonfly_accessor :file
 
       after_initialize :set_default_values, :set_required_params
 
@@ -209,10 +205,6 @@ module Csv2db
 
     def set_required_params
       @required_params = []
-    end
-
-    def check_file_extension
-      errors.add(:file, I18n.t('shared.file_processor.incorrect_file_type')) unless file.ext == 'csv'
     end
   end
 end
