@@ -15,7 +15,10 @@
     %tr
       %td= import.id
       %td= import.created_at
-      %td= link_to import.file.name, import.file.url, target: '_blank'
+      - if Csv2db.config.storage_adapter.dragonfly?
+        %td= link_to import.file.name, import.file.url, target: '_blank'
+      - else
+        %td No File Yet
       %td
         .badge{ class: "badge-upload-#{import.status}" }= import.status
       %td

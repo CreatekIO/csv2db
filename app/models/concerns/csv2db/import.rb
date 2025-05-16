@@ -27,7 +27,7 @@ module Csv2db
     end
 
     included do
-      include Module.const_get("Csv2db::#{Csv2db.config.storage_adapter}Adapter")
+      include Module.const_get("Csv2db::#{Csv2db.config.storage_adapter.camelize.constantize}Adapter")
 
       validate :required_params_are_present
 
@@ -127,7 +127,7 @@ module Csv2db
     private
 
     def check_file_contains_data
-      error(I18n.t('shared.file_processor.insufficient_rows')) unless file.data.present? && csv.count > 0
+      error(I18n.t('shared.file_processor.insufficient_rows')) unless csv.headers.present? && csv.count.positive?
       stop if errors?
     end
 
@@ -161,12 +161,6 @@ module Csv2db
       @csv ||= CSV.parse(file_data, headers: true)
     end
 
-    def file_data
-      file_data = str_to_utf_8(file.data)
-      file_data.sub!(BYTE_ORDER_MARK, '') if file_data.starts_with?(BYTE_ORDER_MARK)
-      file_data
-    end
-
     def required_params_are_present
       return if @required_params.empty?
 
@@ -179,7 +173,7 @@ module Csv2db
     end
 
     def log(message, level = :info)
-      log_messages << { message: str_to_utf_8(message), level: level, time: Time.now }
+      log_messages << { message: str_to_utf8(message), level: level, time: Time.now }
     end
 
     def error(message)
@@ -199,8 +193,14 @@ module Csv2db
       self.status ||= Status::PENDING
     end
 
-    def str_to_utf_8(str)
+    def str_to_utf8(str)
+      return if str_encoding(str) == 'UTF-8'
+
       CharlockHolmes::Converter.convert(str, str.detect_encoding[:encoding], 'UTF-8')
+    end
+
+    def str_encoding(str)
+      str.detect_encoding[:encoding]
     end
 
     def set_required_params
