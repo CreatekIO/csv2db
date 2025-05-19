@@ -194,9 +194,9 @@ module Csv2db
     end
 
     def str_to_utf8(str)
-      return if str_encoding(str) == 'UTF-8'
+      return str if str_encoding(str) == 'UTF-8'
 
-      CharlockHolmes::Converter.convert(str, str.detect_encoding[:encoding], 'UTF-8')
+      CharlockHolmes::Converter.convert(str, str_encoding(str), 'UTF-8')
     end
 
     def str_encoding(str)
