@@ -1,10 +1,11 @@
 module Csv2db::ActiveStorageAdapter
   extend ActiveSupport::Concern
-
   FILE_TYPE = 'text/csv'.freeze
 
   included do
     has_one_attached :csv_upload
+
+    validate :check_file_extension
   end
 
   def file=(file)
@@ -12,11 +13,16 @@ module Csv2db::ActiveStorageAdapter
     csv_upload.attach(
       io: file.tempfile,
       filename: file.original_filename,
-      content_type: FILE_TYPE
+      content_type: file.content_type
     )
   end
 
   private
+
+  def check_file_extension
+    # very basic check of file extension
+    errors.add(:file, I18n.t('shared.file_processor.incorrect_file_type')) unless csv_upload.blob.content_type == FILE_TYPE
+  end
 
   def file_data
     return @file_data if @file_data.present?
