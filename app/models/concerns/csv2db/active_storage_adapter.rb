@@ -11,7 +11,7 @@ module Csv2db::ActiveStorageAdapter
   def file=(file)
     # Override Dragonfly setter method
     csv_upload.attach(
-      io: file.tempfile,
+      io: File.open(file),
       filename: file.original_filename,
       content_type: file.content_type
     )
