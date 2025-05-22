@@ -18,7 +18,7 @@
       - if Csv2db.config.storage_adapter.dragonfly?
         %td= link_to import.file.name, import.file.url, target: '_blank'
       - else
-        %td No File Yet
+        %td= link_to import.file_name, import.expiring_link
       %td
         .badge{ class: "badge-upload-#{import.status}" }= import.status
       %td
