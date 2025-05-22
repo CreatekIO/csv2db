@@ -104,4 +104,42 @@ RSpec.describe Csv2db::Import do
       expect(subject.errors?).to be_truthy
     end
   end
+
+  context 'ActiveStorageAdapter' do
+    let(:file) do
+      Rack::Test::UploadedFile.new(Tempfile.new)
+    end
+
+    let(:attachment_spy) do
+      spy('csv_upload')
+    end
+
+    subject do
+      TestModel.new
+    end
+
+    before do
+      allow(TestModel).to receive(:has_one_attached)
+      TestModel.include(Csv2db::ActiveStorageAdapter)
+      allow(subject).to receive(:csv_upload).and_return(attachment_spy)
+    end
+
+    it 'calls correct attach methods' do
+      expect(file).to receive(:original_filename)
+      expect(file).to receive(:content_type)
+      expect(attachment_spy).to receive(:attach)
+
+      subject.file = file
+    end
+
+    it 'sets the file_name on the model' do
+      subject.file = file
+
+      expect(subject.file_name).to eq(file.original_filename)
+    end
+
+    it 'returns nil if no file passed' do
+      expect(subject.file = nil).to eq(nil)
+    end
+  end
 end

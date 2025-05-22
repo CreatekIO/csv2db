@@ -1,4 +1,6 @@
 module Csv2db::ActiveStorageAdapter
+  require 'active_support/all'
+
   extend ActiveSupport::Concern
   FILE_TYPE = 'text/csv'.freeze
   MAX_EXPIRY = 7.days.to_s.freeze
@@ -11,6 +13,7 @@ module Csv2db::ActiveStorageAdapter
 
   def file=(file)
     # Override Dragonfly setter method
+    return unless file.present?
 
     filename = file.original_filename
 
