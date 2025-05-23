@@ -16,7 +16,7 @@ module Csv2db
     end
 
     def file_attachment_name
-      @file_attachment_name ||= :csv_attachment
+      @file_attachment_name ||= :file_attachment
     end
   end
 end

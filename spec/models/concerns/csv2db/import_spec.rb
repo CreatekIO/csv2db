@@ -120,6 +120,8 @@ RSpec.describe Csv2db::Import do
 
     before do
       allow(TestModel).to receive(:has_one_attached)
+      allow(TestModel).to receive(:alias_method)
+        .with(:file_attachment, :file_attachment).and_return(nil)
       TestModel.include(Csv2db::ActiveStorageAdapter)
       allow(subject).to receive(:file_attachment).and_return(attachment_spy)
     end
