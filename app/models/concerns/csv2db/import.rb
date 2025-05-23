@@ -124,6 +124,10 @@ module Csv2db
       end
     end
 
+    def respond_to_missing?(method, include_private = false)
+      method.to_s.start_with?('param_') || super
+    end
+
     private
 
     def check_file_contains_data
