@@ -11,6 +11,8 @@ module Csv2db::DragonflyAdapter
     validate :check_file_extension
   end
 
+  private
+
   def check_file_extension
     # very basic check of file extension
     errors.add(:file, I18n.t('shared.file_processor.incorrect_file_type')) unless file.ext == 'csv'
