@@ -3,7 +3,7 @@ module Csv2db::ActiveStorageAdapter
 
   extend ActiveSupport::Concern
   FILE_TYPE = 'text/csv'.freeze
-  MAX_EXPIRY = 7.days.to_s.freeze
+  LINK_MAX_EXPIRY = 7.days.to_s.freeze
 
   included do
     has_one_attached Csv2db.config.file_attachment_name
@@ -28,7 +28,7 @@ module Csv2db::ActiveStorageAdapter
     self.file_name = filename
   end
 
-  def expiring_link(expires_in: MAX_EXPIRY)
+  def expiring_link(expires_in: LINK_MAX_EXPIRY)
     return unless file_attachment.present?
 
     set_current_host
