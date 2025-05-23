@@ -111,7 +111,7 @@ RSpec.describe Csv2db::Import do
     end
 
     let(:attachment_spy) do
-      spy('csv_upload')
+      spy('file_attachment')
     end
 
     subject do
@@ -121,7 +121,7 @@ RSpec.describe Csv2db::Import do
     before do
       allow(TestModel).to receive(:has_one_attached)
       TestModel.include(Csv2db::ActiveStorageAdapter)
-      allow(subject).to receive(:csv_upload).and_return(attachment_spy)
+      allow(subject).to receive(:file_attachment).and_return(attachment_spy)
     end
 
     it 'calls correct attach methods' do

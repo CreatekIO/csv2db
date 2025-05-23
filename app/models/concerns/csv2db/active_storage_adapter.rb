@@ -6,9 +6,11 @@ module Csv2db::ActiveStorageAdapter
   MAX_EXPIRY = 7.days.to_s.freeze
 
   included do
-    has_one_attached :csv_upload
+    has_one_attached Csv2db.config.file_attachment_name
 
     validate :check_file_extension
+
+    alias_method :file_attachment, Csv2db.config.file_attachment_name
   end
 
   def file=(file)
@@ -17,7 +19,7 @@ module Csv2db::ActiveStorageAdapter
 
     filename = file.original_filename
 
-    csv_upload.attach(
+    file_attachment.attach(
       io: File.open(file),
       filename: filename,
       content_type: file.content_type
@@ -27,30 +29,30 @@ module Csv2db::ActiveStorageAdapter
   end
 
   def expiring_link(expires_in: MAX_EXPIRY)
-    return unless csv_upload.present?
+    return unless file_attachment.present?
 
-    set_current_host_if_local
+    set_current_host
 
-    csv_upload.service_url(expires_in: expires_in.to_i, disposition: 'attachment')
+    file_attachment.service_url(expires_in: expires_in.to_i, disposition: 'attachment')
   end
 
   private
 
-  def set_current_host_if_local
-    return unless Rails.application.config.active_storage.service == :local
+  def set_current_host
+    return unless %i[test local].include?(Rails.application.config.active_storage.service)
 
     ActiveStorage::Current.host = ReportGenerator.config.local_storage_host
   end
 
   def check_file_extension
     # very basic check of file extension
-    errors.add(:file, I18n.t('shared.file_processor.incorrect_file_type')) unless csv_upload.blob.content_type == FILE_TYPE
+    errors.add(:file, I18n.t('shared.file_processor.incorrect_file_type')) unless file_attachment.blob.content_type == FILE_TYPE
   end
 
   def file_data
     return @file_data if @file_data.present?
 
-    csv_upload.blob.open do |blob|
+    file_attachment.blob.open do |blob|
       @file_data = str_to_utf8(blob.read)
     end
 
