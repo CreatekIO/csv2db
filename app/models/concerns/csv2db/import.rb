@@ -27,13 +27,9 @@ module Csv2db
     end
 
     included do
-      extend Dragonfly::Model
+      include Module.const_get("Csv2db::#{Csv2db.config.storage_adapter.camelize.constantize}Adapter")
 
-      validates :file, presence: true
       validate :required_params_are_present
-      validate :check_file_extension
-
-      dragonfly_accessor :file
 
       after_initialize :set_default_values, :set_required_params
 
@@ -128,10 +124,14 @@ module Csv2db
       end
     end
 
+    def respond_to_missing?(method, include_private = false)
+      method.to_s.start_with?('param_') || super
+    end
+
     private
 
     def check_file_contains_data
-      error(I18n.t('shared.file_processor.insufficient_rows')) unless file.data.present? && csv.count > 0
+      error(I18n.t('shared.file_processor.insufficient_rows')) unless csv.headers.present? && csv.count.positive?
       stop if errors?
     end
 
@@ -165,12 +165,6 @@ module Csv2db
       @csv ||= CSV.parse(file_data, headers: true)
     end
 
-    def file_data
-      file_data = str_to_utf_8(file.data)
-      file_data.sub!(BYTE_ORDER_MARK, '') if file_data.starts_with?(BYTE_ORDER_MARK)
-      file_data
-    end
-
     def required_params_are_present
       return if @required_params.empty?
 
@@ -183,7 +177,7 @@ module Csv2db
     end
 
     def log(message, level = :info)
-      log_messages << { message: str_to_utf_8(message), level: level, time: Time.now }
+      log_messages << { message: str_to_utf8(message), level: level, time: Time.now }
     end
 
     def error(message)
@@ -203,16 +197,16 @@ module Csv2db
       self.status ||= Status::PENDING
     end
 
-    def str_to_utf_8(str)
-      CharlockHolmes::Converter.convert(str, str.detect_encoding[:encoding], 'UTF-8')
+    def str_to_utf8(str)
+      CharlockHolmes::Converter.convert(str, str_encoding(str), 'UTF-8')
+    end
+
+    def str_encoding(str)
+      str.detect_encoding[:encoding]
     end
 
     def set_required_params
       @required_params = []
-    end
-
-    def check_file_extension
-      errors.add(:file, I18n.t('shared.file_processor.incorrect_file_type')) unless file.ext == 'csv'
     end
   end
 end

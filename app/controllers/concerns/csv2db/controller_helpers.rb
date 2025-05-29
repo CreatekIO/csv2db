@@ -36,7 +36,7 @@ module Csv2db::ControllerHelpers
   end
 
   def enqueue_csv_import(klass, options = {})
-    permitted_params = options.fetch(:params) do 
+    permitted_params = options.fetch(:params) do
       params.require(klass.model_name.param_key).permit(
         :file,
         *options[:extra_params]
