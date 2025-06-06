@@ -16,7 +16,7 @@
       %td= import.id
       %td= import.created_at
       - if Csv2db.config.storage_adapter.active_storage?
-        %td= link_to import.file_name, import.expiring_link
+        %td= link_to import.file_name, import.download_link
       - else
         %td= link_to import.file.name, import.file.url, target: '_blank'
       %td

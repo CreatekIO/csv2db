@@ -28,7 +28,7 @@ module Csv2db::ActiveStorageAdapter
     self.file_name = filename
   end
 
-  def expiring_link(expires_in: LINK_MAX_EXPIRY)
+  def download_link(expires_in: LINK_MAX_EXPIRY)
     return unless file_attachment.present?
 
     set_current_host
@@ -41,7 +41,7 @@ module Csv2db::ActiveStorageAdapter
   def set_current_host
     return unless %i[test local].include?(Rails.application.config.active_storage.service)
 
-    ActiveStorage::Current.host = ReportGenerator.config.local_storage_host
+    ActiveStorage::Current.host = Csv2db.config.local_storage_host
   end
 
   def check_file_extension
