@@ -11,6 +11,10 @@ module Csv2db::DragonflyAdapter
     validate :check_file_extension
   end
 
+  def download_link
+    file.url
+  end
+
   private
 
   def check_file_extension
