@@ -28,12 +28,15 @@ module Csv2db::ActiveStorageAdapter
     self.file_name = filename
   end
 
-  def download_link(expires_in: LINK_MAX_EXPIRY)
-    return unless file_attachment.present?
+  def download_link
+    return unless file_attachment.present? && file_attachment.attached?
 
     set_current_host
 
-    file_attachment.service_url(expires_in: expires_in.to_i, disposition: 'attachment')
+    file_attachment.service_url(
+      expires_in: LINK_MAX_EXPIRY.to_i,
+      disposition: 'attachment'
+    )
   end
 
   private
