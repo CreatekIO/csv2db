@@ -33,7 +33,7 @@ module Csv2db::ActiveStorageAdapter
 
     set_current_host
 
-    file_attachment.service_url(
+    file_attachment.url(
       expires_in: LINK_MAX_EXPIRY.to_i,
       disposition: 'attachment'
     )
