@@ -13,6 +13,8 @@ module Csv2db
 
     initializer 'csv2db.add_controller_helpers' do
       ActiveSupport.on_load(:action_controller) do
+        require_relative '../../app/controllers/concerns/csv2db/controller_helpers'
+
         include Csv2db::ControllerHelpers
       end
     end

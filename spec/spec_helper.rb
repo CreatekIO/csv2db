@@ -1,10 +1,13 @@
 require 'bundler/setup'
 require 'byebug'
 require 'mysql2'
+require 'logger'
 require 'rails/all'
 require 'csv2db'
 require_relative '../app/models/concerns/csv2db/import'
 require_relative '../app/workers/csv2db/import_worker'
+require_relative '../app/models/concerns/csv2db/dragonfly_adapter'
+require_relative '../app/models/concerns/csv2db/active_storage_adapter'
 
 ENV['RAILS_ENV'] ||= 'test'
 
@@ -21,7 +24,7 @@ RSpec.configure do |config|
 end
 
 db_config = {
-  database: "csv2db_test#{ENV['CIRCLE_NODE_INDEX']}",
+  database: 'csv2db_test',
   adapter: 'mysql2',
   encoding: 'utf8mb4',
   pool: 5,

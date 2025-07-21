@@ -15,7 +15,7 @@
     %tr
       %td= import.id
       %td= import.created_at
-      %td= link_to import.file.name, import.file.url, target: '_blank'
+      %td= link_to(import.file_name, import.download_link)
       %td
         .badge{ class: "badge-upload-#{import.status}" }= import.status
       %td
